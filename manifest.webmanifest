@@ -1,0 +1,12 @@
+{
+  "name": "Sloth Branch Balance",
+  "short_name": "Branch Balance",
+  "description": "A one-minute stillness game. Offline-first. Shareable score card.",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#070a0f",
+  "theme_color": "#070a0f",
+  "icons": [
+    {"src": "assets/sloth.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any"}
+  ]
+}

@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Sloth Branch Balance</title>
+  <meta name="description" content="Sloth Branch Balance — a one-minute stillness game. Keep the sloth balanced by doing almost nothing. Offline-first, shareable score card." />
+  <meta property="og:title" content="Sloth Branch Balance" />
+  <meta property="og:description" content="A one-minute stillness game. Keep the sloth balanced by doing almost nothing." />
+  <meta property="og:type" content="website" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="theme-color" content="#070a0f" />
+
+  <link rel="icon" href="assets/sloth.svg" type="image/svg+xml" />
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main class="wrap">
+    <header class="top">
+      <div class="brand">
+        <img class="logo" src="assets/sloth.svg" alt="Sloth" />
+        <div>
+          <h1>Sloth Branch Balance</h1>
+          <p class="tag">a one-minute stillness game • offline-first</p>
+        </div>
+      </div>
+      <div class="headerActions">
+        <button id="btnPlay" class="btn" type="button">Play (60s)</button>
+        <button id="btnDaily" class="btn ghost" type="button">Daily seed</button>
+        <button id="btnShare" class="btn secondary" type="button" disabled>Share score</button>
+      </div>
+    </header>
+
+    <section class="grid">
+      <section class="card">
+        <canvas id="game" class="game" width="960" height="540" aria-label="Game canvas"></canvas>
+        <div class="hud">
+          <div class="pill">Time: <span id="time">60</span>s</div>
+          <div class="pill">Stillness: <span id="still">0</span>%</div>
+          <div class="pill">Wobble: <span id="wobble">0</span></div>
+        </div>
+        <div class="small muted" id="hint">Controls: do less. Optional: tap/click to nudge the branch. The sloth prefers you don’t.</div>
+      </section>
+
+      <section class="card">
+        <div class="cardHead">
+          <div>
+            <h2>How it works</h2>
+            <div class="small muted">The score rewards *stillness*. This is anti-twitch gameplay.</div>
+          </div>
+          <div class="pill">Best: <span id="best">—</span></div>
+        </div>
+
+        <div class="rules">
+          <div class="rule"><div class="rTitle">Goal</div><div class="rBody">Keep the sloth near level for 60 seconds.</div></div>
+          <div class="rule"><div class="rTitle">Stillness score</div><div class="rBody">The less you intervene, the higher your stillness. Interventions reduce it.</div></div>
+          <div class="rule"><div class="rTitle">Daily seed</div><div class="rBody">A daily wind pattern (same for everyone) so scores are comparable.</div></div>
+          <div class="rule"><div class="rTitle">Share card</div><div class="rBody">Generate a premium card image with your score + seed.</div></div>
+        </div>
+
+        <details class="details">
+          <summary>Settings</summary>
+          <div class="advGrid">
+            <label>
+              Difficulty
+              <select id="diff">
+                <option value="easy">easy</option>
+                <option value="normal" selected>normal</option>
+                <option value="hard">hard</option>
+              </select>
+            </label>
+            <label>
+              Visuals
+              <select id="visuals">
+                <option value="on" selected>on</option>
+                <option value="reduced">reduced</option>
+                <option value="off">off</option>
+              </select>
+            </label>
+            <label class="check">
+              <input id="sound" type="checkbox" checked />
+              Gentle wind audio
+            </label>
+          </div>
+        </details>
+
+        <div class="footNote muted small">No accounts. Local best score saved in your browser.</div>
+      </section>
+    </section>
+
+    <footer class="foot">
+      <p>Stillness, but competitive. <a href="https://github.com/owleggsbot/sloth-branch-balance" target="_blank" rel="noreferrer">Source</a>.</p>
+    </footer>
+  </main>
+
+  <dialog id="shareDialog">
+    <form method="dialog" class="dialog">
+      <h3>Score card</h3>
+      <p class="muted small">Copy or download.</p>
+      <div class="row" style="gap:10px;">
+        <button id="btnCopy" class="btn secondary" type="button">Copy image</button>
+        <button id="btnDownload" class="btn" type="button">Download PNG</button>
+        <button class="btn ghost" value="close">Close</button>
+      </div>
+      <div class="preview"><img id="shareImg" alt="Score card" /></div>
+      <canvas id="shareCanvas" width="1200" height="630" hidden></canvas>
+    </form>
+  </dialog>
+
+  <script src="app.js"></script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js').catch(() => {}));
+    }
+  </script>
+</body>
+</html>
