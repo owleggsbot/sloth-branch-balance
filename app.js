@@ -99,6 +99,15 @@ function stopAudio(){
 const canvas = $('game');
 const ctx = canvas.getContext('2d');
 
+// Sloth SVG sprite (for gameplay)
+const slothSprite = {
+  img: new Image(),
+  ready: false,
+};
+slothSprite.img.onload = () => { slothSprite.ready = true; };
+slothSprite.img.onerror = () => { slothSprite.ready = false; };
+slothSprite.img.src = './assets/sloth-gameplay.svg';
+
 let sim = {
   running: false,
   t: 0,
@@ -250,7 +259,14 @@ function draw(){
   ctx.ellipse(slothX, 20, 86, 18, 0, 0, Math.PI*2);
   ctx.fill();
 
-  drawSlothCharacter(ctx, slothX, slothY, 1.0);
+  // Prefer SVG sprite (more detailed + consistent). Fallback to vector draw.
+  if (slothSprite.ready) {
+    const w = 170;
+    const h = 124;
+    ctx.drawImage(slothSprite.img, slothX - w/2, slothY - h/2, w, h);
+  } else {
+    drawSlothCharacter(ctx, slothX, slothY, 1.0);
+  }
 
   // tiny hanging claws over the branch for readability
   ctx.save();
