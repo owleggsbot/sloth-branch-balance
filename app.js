@@ -240,37 +240,31 @@ function draw(){
   ctx.lineTo(330, 0);
   ctx.stroke();
 
-  // sloth body
+  // sloth character (canvas-drawn, more sloth-like)
   const slothX = 0;
-  const slothY = -44;
+  const slothY = -34;
+
   // shadow
   ctx.fillStyle = 'rgba(0,0,0,0.35)';
   ctx.beginPath();
-  ctx.ellipse(slothX, 18, 80, 18, 0, 0, Math.PI*2);
+  ctx.ellipse(slothX, 20, 86, 18, 0, 0, Math.PI*2);
   ctx.fill();
 
-  // sloth blob
-  ctx.fillStyle = 'rgba(123,211,137,0.92)';
-  roundRect(ctx, slothX-70, slothY-42, 140, 92, 34);
-  ctx.fill();
+  drawSlothCharacter(ctx, slothX, slothY, 1.0);
 
-  // face
-  ctx.fillStyle = 'rgba(11,15,20,0.55)';
-  ctx.beginPath();
-  ctx.ellipse(slothX, slothY+2, 46, 30, 0, 0, Math.PI*2);
-  ctx.fill();
-
-  ctx.fillStyle = '#0b0f14';
-  ctx.beginPath();
-  ctx.ellipse(slothX-16, slothY, 6, 7, 0, 0, Math.PI*2);
-  ctx.ellipse(slothX+16, slothY, 6, 7, 0, 0, Math.PI*2);
-  ctx.fill();
-
-  ctx.strokeStyle = '#0b0f14';
-  ctx.lineWidth = 4;
-  ctx.beginPath();
-  ctx.arc(slothX, slothY+16, 14, 0.1*Math.PI, 0.9*Math.PI);
-  ctx.stroke();
+  // tiny hanging claws over the branch for readability
+  ctx.save();
+  ctx.translate(slothX, slothY);
+  ctx.fillStyle = 'rgba(26,21,19,0.85)';
+  for (const dx of [-34, -24, 24, 34]) {
+    ctx.beginPath();
+    ctx.roundRect?.(dx - 3, 42, 6, 12, 3);
+    if (!ctx.roundRect) {
+      roundRect(ctx, dx - 3, 42, 6, 12, 3);
+    }
+    ctx.fill();
+  }
+  ctx.restore();
 
   ctx.restore();
 
@@ -399,22 +393,106 @@ function drawShare(){
 }
 
 function drawSlothMark(c){
-  c.fillStyle = 'rgba(123,211,137,0.95)';
-  c.beginPath();
-  c.ellipse(30, 30, 24, 22, 0, 0, Math.PI*2);
+  // Mark used on share card (small + high contrast)
+  c.save();
+  c.translate(30, 32);
+  c.scale(0.92, 0.92);
+  drawSlothCharacter(c, 0, 0, 0.55, { simple: true });
+  c.restore();
+}
+
+function drawSlothCharacter(c, x, y, s=1, opts={}){
+  const simple = !!opts.simple;
+  c.save();
+  c.translate(x, y);
+  c.scale(s, s);
+
+  // Colors (match assets/sloth.svg vibe)
+  const fur1 = 'rgba(122,106,92,0.98)';
+  const fur2 = 'rgba(86,74,65,0.98)';
+  const face1 = 'rgba(214,199,181,0.98)';
+  const face2 = 'rgba(185,167,146,0.98)';
+  const mask1 = 'rgba(59,49,44,0.88)';
+  const ink = 'rgba(11,15,20,0.92)';
+
+  // Body (rounded pill)
+  const bodyW = 156;
+  const bodyH = 104;
+  const r = 42;
+  const top = -54;
+  const left = -bodyW/2;
+
+  // Fur gradient
+  const gF = c.createLinearGradient(0, top, 0, top + bodyH);
+  gF.addColorStop(0, fur1);
+  gF.addColorStop(1, fur2);
+  c.fillStyle = gF;
+  roundRect(c, left, top, bodyW, bodyH, r);
   c.fill();
 
-  c.fillStyle = 'rgba(11,15,20,0.9)';
+  // Face patch
+  const gFace = c.createRadialGradient(-10, -20, 10, 0, -10, 80);
+  gFace.addColorStop(0, face1);
+  gFace.addColorStop(1, face2);
+  c.fillStyle = gFace;
   c.beginPath();
-  c.ellipse(22, 28, 6, 7, 0, 0, Math.PI*2);
-  c.ellipse(38, 28, 6, 7, 0, 0, Math.PI*2);
+  c.ellipse(0, -6, 54, 44, 0, 0, Math.PI*2);
   c.fill();
 
-  c.strokeStyle = 'rgba(11,15,20,0.9)';
-  c.lineWidth = 3;
+  // Eye mask
+  c.fillStyle = mask1;
   c.beginPath();
-  c.arc(30, 36, 9, 0.1*Math.PI, 0.9*Math.PI);
+  c.moveTo(-46, -8);
+  c.quadraticCurveTo(-28, -34, 0, -34);
+  c.quadraticCurveTo(28, -34, 46, -8);
+  c.quadraticCurveTo(28, -18, 0, -18);
+  c.quadraticCurveTo(-28, -18, -46, -8);
+  c.closePath();
+  c.fill();
+
+  // Eyes
+  c.fillStyle = ink;
+  c.beginPath();
+  c.ellipse(-18, -10, 7, 8, 0, 0, Math.PI*2);
+  c.ellipse(18, -10, 7, 8, 0, 0, Math.PI*2);
+  c.fill();
+
+  // Highlights
+  if (!simple) {
+    c.fillStyle = 'rgba(255,255,255,0.75)';
+    c.beginPath();
+    c.arc(-20, -14, 2, 0, Math.PI*2);
+    c.arc(16, -14, 2, 0, Math.PI*2);
+    c.fill();
+  }
+
+  // Nose
+  c.fillStyle = 'rgba(26,21,19,0.95)';
+  c.beginPath();
+  c.moveTo(-8, 4);
+  c.quadraticCurveTo(0, -6, 8, 4);
+  c.quadraticCurveTo(0, 11, -8, 4);
+  c.closePath();
+  c.fill();
+
+  // Smile
+  c.strokeStyle = ink;
+  c.lineWidth = 4.2;
+  c.lineCap = 'round';
+  c.beginPath();
+  c.arc(0, 14, 16, 0.12*Math.PI, 0.88*Math.PI);
   c.stroke();
+
+  // Arms (hugging the branch)
+  if (!simple) {
+    c.fillStyle = 'rgba(91,78,70,0.96)';
+    c.beginPath();
+    c.ellipse(-58, 18, 24, 18, -0.15, 0, Math.PI*2);
+    c.ellipse(58, 18, 24, 18, 0.15, 0, Math.PI*2);
+    c.fill();
+  }
+
+  c.restore();
 }
 
 async function openShare(){
