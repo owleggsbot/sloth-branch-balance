@@ -5,7 +5,8 @@ const ASSETS = [
   './styles.css',
   './app.js',
   './manifest.webmanifest',
-  './assets/sloth.svg'
+  './assets/sloth.svg',
+  './assets/sloth-gameplay.svg'
 ];
 
 self.addEventListener('install', (e) => {
